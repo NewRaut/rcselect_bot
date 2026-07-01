@@ -27,6 +27,8 @@ func main() {
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		
+		if update.Message != nil {
+			log.Printf("Сообщение от %s: %s", update.Message.From.UserName, update.Message.Text)
+		}
 	}
 }
