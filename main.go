@@ -27,8 +27,24 @@ func main() {
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message != nil {
+		if update.Message != nil && update.Message.IsCommand() && update.Message.Command() == "start" {
+			keyboard := tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("💻 Вопрос по работе ПО", "software"),
+				),
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("🔑 Проблемы с лицензией", "license"),
+				),
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("✏️ Задать свой вопрос", "other"),
+				),
+			)
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "👋 Добро пожаловать в службу поддержки RCSelect!\n\nВыберите категорию обращения:")
+			msg.ReplyMarkup = keyboard
 			log.Printf("Сообщение от %s: %s", update.Message.From.UserName, update.Message.Text)
+			if _, err := bot.Send(msg); err != nil {
+				log.Println("ошибка отправки:", err)
+			}
 		}
 	}
 }
